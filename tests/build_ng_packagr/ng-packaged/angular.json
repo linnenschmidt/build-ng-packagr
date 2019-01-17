@@ -1,0 +1,48 @@
+{
+  "$schema": "../../../node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": {
+    "lib": {
+      "root": "projects/lib",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "builder": "../../../dist/packages/builders/src/build-ng-packagr:build",
+          "options": {
+            "project": "projects/lib/ng-package.json",
+            "tsConfig": "projects/lib/tsconfig.lib.json",
+            "assets": [
+              "src/assets",
+              {
+                "glob": "**/*.css",
+                "input": "src/some-assets",
+                "output": "assets/some-assets"
+              }
+            ]
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/lib/src/test.ts",
+            "tsConfig": "projects/lib/tsconfig.spec.json",
+            "karmaConfig": "projects/lib/karma.conf.js",
+            "browsers": "ChromeHeadless",
+            "progress": false,
+            "watch": true
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/lib/tsconfig.lib.json",
+              "projects/lib/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        }
+      }
+    }
+  }
+}

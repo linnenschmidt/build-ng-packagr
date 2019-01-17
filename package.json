@@ -1,0 +1,49 @@
+{
+  "name": "build-ng-packagr",
+  "version": "1.0.0",
+  "description": "Angular Build Architect for ng-packagr with @angular-devkit/build-angular like asset handling",
+  "main": "index.js",
+  "scripts": {
+    "test": "./scripts/test.sh",
+    "build": "./scripts/build.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linnenschmidt/build-ng-packagr.git"
+  },
+  "author": "Linnenschmidt <xpdcpjzz+github@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/linnenschmidt/build-ng-packagr/issues"
+  },
+  "homepage": "https://github.com/linnenschmidt/build-ng-packagr#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@angular-devkit/architect": "~0.12.0",
+    "@angular-devkit/build-angular": "~0.12.0",
+    "@angular-devkit/core": "^7.2.0",
+    "@angular/common": "^7.2.0",
+    "@angular/compiler": "^7.2.0",
+    "@angular/compiler-cli": "^7.2.0",
+    "@angular/core": "^7.2.0",
+    "@types/globby": "^8.0.0",
+    "@types/jasmine": "^3.3.5",
+    "@types/semver": "^5.5.0",
+    "codelyzer": "~4.5.0",
+    "globby": "^9.0.0",
+    "jasmine": "^2.99.0",
+    "jasmine-core": "~2.99.1",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~3.1.1",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-coverage-istanbul-reporter": "~2.0.1",
+    "karma-jasmine": "~1.1.2",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "ng-packagr": "^4.6.0",
+    "rxjs": "~6.3.3",
+    "semver": "5.6.0",
+    "tsickle": ">=0.34.0",
+    "tslint": "~5.11.0",
+    "typescript": "~3.2.2"
+  }
+}

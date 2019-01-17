@@ -1,0 +1,65 @@
+{
+  "title": "ng-packagr Target",
+  "description": "ng-packagr target options for Build Architect.",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The file path of the package.json for distribution via npm."
+    },
+    "tsConfig": {
+      "type": "string",
+      "description": "The file path of the TypeScript configuration file."
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Run build when files change.",
+      "default": false
+    },
+    "assets": {
+      "type": "array",
+      "description": "List of static application assets.",
+      "default": [],
+      "items": {
+        "$ref": "#/definitions/assetPattern"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": ["project"],
+  "definitions": {
+    "assetPattern": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "glob": {
+              "type": "string",
+              "description": "The pattern to match."
+            },
+            "input": {
+              "type": "string",
+              "description": "The input directory path in which to apply 'glob'. Defaults to the project root."
+            },
+            "output": {
+              "type": "string",
+              "description": "Absolute path within the output."
+            },
+            "ignore": {
+              "description": "An array of globs to ignore.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": ["glob", "input", "output"]
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@linnenschmidt/build-ng-packagr",
+  "version": "7.0.1",
+  "description": "Angular Build Architect for ng-packagr with asset handling",
+  "main": "src/index.js",
+  "typings": "src/index.d.ts",
+  "builders": "builders.json",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linnenschmidt/build-ng-packagr.git"
+  },
+  "author": "Linnenschmidt <xpdcpjzz+github@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/linnenschmidt/build-ng-packagr/issues"
+  },
+  "homepage": "https://github.com/linnenschmidt/build-ng-packagr#readme",
+  "dependencies": {
+    "@angular-devkit/architect": "~0.12.0",
+    "@angular-devkit/core": ">=7.0.0",
+    "rxjs": "~6.3.3",
+    "semver": "5.6.0",
+    "globby": "^9.0.0"
+  },
+  "peerDependencies": {
+    "ng-packagr": "^2.2.0 || ^3.0.0 || ^4.0.0"
+  }
+}
