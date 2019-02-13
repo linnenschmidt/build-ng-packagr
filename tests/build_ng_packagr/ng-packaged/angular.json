@@ -13,10 +13,16 @@
             "tsConfig": "projects/lib/tsconfig.lib.json",
             "assets": [
               "src/assets",
+              "src/deep-assets/some-deep/some-deep.scss",
               {
                 "glob": "**/*.css",
                 "input": "src/some-assets",
                 "output": "assets/some-assets"
+              },
+              {
+                "glob": "**/*.css",
+                "input": "src/deep-assets",
+                "output": "assets/deep-output/deep-assets"
               }
             ]
           }

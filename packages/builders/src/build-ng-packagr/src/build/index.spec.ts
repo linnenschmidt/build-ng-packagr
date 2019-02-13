@@ -62,6 +62,24 @@ describe('NgPackagr Builder', () => {
           expect(exists).toBe(true);
         }),
         map(() => {
+          const assetFile = './dist/lib/deep-assets/some-deep/some-deep.scss';
+          const exists = host.scopedSync().exists(normalize(assetFile));
+
+          return exists;
+        }),
+        tap(exists => {
+          expect(exists).toBe(true);
+        }),
+        map(() => {
+          const nonAssetFile = './dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.txt';
+          const exists = host.scopedSync().exists(normalize(nonAssetFile));
+
+          return exists;
+        }),
+        tap(exists => {
+          expect(exists).toBe(false);
+        }),
+        map(() => {
           const nonAssetFile = './dist/lib/assets/some-assets/some-file.txt';
           const exists = host.scopedSync().exists(normalize(nonAssetFile));
 
@@ -69,6 +87,15 @@ describe('NgPackagr Builder', () => {
         }),
         tap(exists => {
           expect(exists).toBe(false);
+        }),
+        map(() => {
+          const assetFile = './dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.css';
+          const exists = host.scopedSync().exists(normalize(assetFile));
+
+          return exists;
+        }),
+        tap(exists => {
+          expect(exists).toBe(true);
         }),
       )
       .toPromise()
