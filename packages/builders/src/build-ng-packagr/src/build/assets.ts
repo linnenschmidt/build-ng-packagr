@@ -87,8 +87,8 @@ function moveAssets(
           const cleanFilePath = entry.replace(rule.context, '');
           const to = path.resolve(dest, rule.to, cleanFilePath);
           const pathToFolder = path.dirname(to);
-          pathToFolder.split('/').reduce((p, folder) => {
-            p += folder + '/';
+          pathToFolder.split(path.sep).reduce((p, folder) => {
+            p += folder + path.sep;
             if (!fs.existsSync(p)) {
               fs.mkdirSync(p);
             }
