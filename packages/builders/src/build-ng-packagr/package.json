@@ -1,7 +1,14 @@
 {
   "name": "@linnenschmidt/build-ng-packagr",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "Angular Build Architect for ng-packagr with asset handling",
+  "keywords": [
+    "angular",
+    "Angular CLI",
+    "devkit",
+    "sdk",
+    "Angular DevKit"
+  ],
   "main": "src/index.js",
   "typings": "src/index.d.ts",
   "builders": "builders.json",
