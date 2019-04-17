@@ -1,20 +1,15 @@
-import {
-  BuilderContext,
-  BuilderConfiguration,
-} from '@angular-devkit/architect';
 import { resolve, virtualFs } from '@angular-devkit/core';
 import * as fs from 'fs';
 import * as globby from 'globby';
 import { discoverPackages } from 'ng-packagr/lib/ng-v5/discover-packages';
 import * as log from 'ng-packagr/lib/util/log';
 import * as path from 'path';
-import { NgPackagrBuilderOptions } from './index';
 import {AssetPattern, AssetPatternObject, normalizeAssetPatterns} from './assets-patterns';
 
 export function handleAssets(
-  context: BuilderContext,
+  context: any,
   packageJsonPath: string,
-  builderConfig: BuilderConfiguration<NgPackagrBuilderOptions>,
+  builderConfig: any,
 ): Promise<any> {
   return discoverPackages({ project: packageJsonPath }).then(ngPackage => {
     log.info('Copying Assets');

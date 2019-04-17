@@ -1,11 +1,20 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema",
   "title": "ng-packagr Target",
   "description": "ng-packagr target options for Build Architect.",
   "type": "object",
   "properties": {
+    "assets": {
+      "type": "array",
+      "description": "List of static application assets.",
+      "default": [],
+      "items": {
+        "$ref": "#/definitions/assetPattern"
+      }
+    },
     "project": {
       "type": "string",
-      "description": "The file path of the package.json for distribution via npm."
+      "description": "The file path for the ng-packagr configuration file, relative to the current workspace."
     },
     "tsConfig": {
       "type": "string",
@@ -15,18 +24,12 @@
       "type": "boolean",
       "description": "Run build when files change.",
       "default": false
-    },
-    "assets": {
-      "type": "array",
-      "description": "List of static application assets.",
-      "default": [],
-      "items": {
-        "$ref": "#/definitions/assetPattern"
-      }
     }
   },
   "additionalProperties": false,
-  "required": ["project"],
+  "required": [
+    "project"
+  ],
   "definitions": {
     "assetPattern": {
       "oneOf": [
@@ -41,20 +44,24 @@
               "type": "string",
               "description": "The input directory path in which to apply 'glob'. Defaults to the project root."
             },
-            "output": {
-              "type": "string",
-              "description": "Absolute path within the output."
-            },
             "ignore": {
               "description": "An array of globs to ignore.",
               "type": "array",
               "items": {
                 "type": "string"
               }
+            },
+            "output": {
+              "type": "string",
+              "description": "Absolute path within the output."
             }
           },
           "additionalProperties": false,
-          "required": ["glob", "input", "output"]
+          "required": [
+            "glob",
+            "input",
+            "output"
+          ]
         },
         {
           "type": "string"

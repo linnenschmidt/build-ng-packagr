@@ -1,110 +1,58 @@
-import { TargetSpecifier } from '@angular-devkit/architect';
+
+import { Architect } from '@angular-devkit/architect';
+import { WorkspaceNodeModulesArchitectHost } from '@angular-devkit/architect/node';
+import { TestProjectHost, TestingArchitectHost } from '@angular-devkit/architect/testing';
 import {
-  TestProjectHost,
-  runTargetSpec,
-} from '@angular-devkit/architect/testing';
-import { join, normalize, virtualFs } from '@angular-devkit/core';
-import {debounceTime, map, take, tap} from 'rxjs/operators';
+  experimental,
+  join,
+  normalize,
+  schema,
+  virtualFs,
+} from '@angular-devkit/core'; // tslint:disable-line:no-implicit-dependencies
+import { map, take, tap } from 'rxjs/operators';
 import * as path from 'path';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 
 const devkitRoot: any = path.resolve(__dirname, '../../../../../../../');
 const workspaceRoot = join(devkitRoot, 'tests/build_ng_packagr/ng-packaged/');
-export const host = new TestProjectHost(workspaceRoot);
 
 describe('NgPackagr Builder', () => {
-  beforeEach(done =>
-    host
-      .initialize()
-      .toPromise()
-      .then(done, done.fail),
-  );
+  const host = new TestProjectHost(workspaceRoot);
+  let architect: Architect;
 
-  afterEach(done =>
-    host
-      .restore()
-      .toPromise()
-      .then(done, done.fail),
-  );
+  beforeEach(async () => {
+    await host.initialize().toPromise();
 
-  it('works', done => {
-    const targetSpec: TargetSpecifier = { project: 'lib', target: 'build' };
+    const registry = new schema.CoreSchemaRegistry();
+    registry.addPostTransform(schema.transforms.addUndefinedDefaults);
 
-    runTargetSpec(host, targetSpec)
-      .pipe(
-        tap(buildEvent => expect(buildEvent.success).toBe(true)),
-        map(() => {
-          const assetFile = './dist/lib/assets/main.scss';
-          const exists = host.scopedSync().exists(normalize(assetFile));
-
-          return exists;
-        }),
-        tap(exists => {
-          expect(exists).toBe(true);
-        }),
-        map(() => {
-          const assetFile = './dist/lib/assets/_lib.scss';
-          const exists = host.scopedSync().exists(normalize(assetFile));
-
-          return exists;
-        }),
-        tap(exists => {
-          expect(exists).toBe(true);
-        }),
-        map(() => {
-          const assetFile = './dist/lib/assets/some-assets/some-asset.css';
-          const exists = host.scopedSync().exists(normalize(assetFile));
-
-          return exists;
-        }),
-        tap(exists => {
-          expect(exists).toBe(true);
-        }),
-        map(() => {
-          const assetFile = './dist/lib/deep-assets/some-deep/some-deep.scss';
-          const exists = host.scopedSync().exists(normalize(assetFile));
-
-          return exists;
-        }),
-        tap(exists => {
-          expect(exists).toBe(true);
-        }),
-        map(() => {
-          const nonAssetFile = './dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.txt';
-          const exists = host.scopedSync().exists(normalize(nonAssetFile));
-
-          return exists;
-        }),
-        tap(exists => {
-          expect(exists).toBe(false);
-        }),
-        map(() => {
-          const nonAssetFile = './dist/lib/assets/some-assets/some-file.txt';
-          const exists = host.scopedSync().exists(normalize(nonAssetFile));
-
-          return exists;
-        }),
-        tap(exists => {
-          expect(exists).toBe(false);
-        }),
-        map(() => {
-          const assetFile = './dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.css';
-          const exists = host.scopedSync().exists(normalize(assetFile));
-
-          return exists;
-        }),
-        tap(exists => {
-          expect(exists).toBe(true);
-        }),
-      )
-      .toPromise()
-      .then(done, done.fail);
+    const workspace = await experimental.workspace.Workspace.fromPath(host, host.root(), registry);
+    const architectHost = new TestingArchitectHost(
+      host.root(),
+      host.root(),
+      new WorkspaceNodeModulesArchitectHost(workspace, host.root()),
+    );
+    architect = new Architect(architectHost, registry);
   });
 
-  it('rebuilds on TS file changes', done => {
-    const targetSpec: TargetSpecifier = { project: 'lib', target: 'build' };
+  afterEach(() => host.restore().toPromise());
 
+  it('builds and packages a library', async () => {
+    const run = await architect.scheduleTarget({ project: 'lib', target: 'build' });
+
+    await expectAsync(run.result).toBeResolvedTo(jasmine.objectContaining({ success: true }));
+
+    await run.stop();
+
+    expect(host.scopedSync().exists(normalize('./dist/lib/fesm5/lib.js'))).toBe(true);
+    const content = virtualFs.fileBufferToString(
+      host.scopedSync().read(normalize('./dist/lib/fesm5/lib.js')),
+    );
+    expect(content).toContain('lib works');
+  });
+
+  it('rebuilds on TS file changes', async () => {
     const goldenValueFiles: { [path: string]: string } = {
       'projects/lib/src/lib/lib.component.ts': `
       import { Component } from '@angular/core';
@@ -116,44 +64,58 @@ describe('NgPackagr Builder', () => {
       `,
     };
 
-    const overrides = { watch: true };
+    const run = await architect.scheduleTarget(
+      { project: 'lib', target: 'build' },
+      { watch: true },
+    );
 
     let buildNumber = 0;
 
-    runTargetSpec(host, targetSpec, overrides)
-      .pipe(
-        // We must debounce on watch mode because file watchers are not very accurate.
-        // Changes from just before a process runs can be picked up and cause rebuilds.
-        // In this case, cleanup from the test right before this one causes a few rebuilds.
-        debounceTime(1000),
-        tap(buildEvent => expect(buildEvent.success).toBe(true)),
-        map(() => {
-          const fileName = './dist/lib/fesm5/lib.js';
-          const content = virtualFs.fileBufferToString(
-            host.scopedSync().read(normalize(fileName)),
-          );
+    await run.output.pipe(
+      tap((buildEvent) => expect(buildEvent.success).toBe(true)),
+      map(() => {
+        const fileName = './dist/lib/fesm5/lib.js';
+        const content = virtualFs.fileBufferToString(
+          host.scopedSync().read(normalize(fileName)),
+        );
 
-          return content;
-        }),
-        tap(content => {
-          buildNumber += 1;
-          switch (buildNumber) {
-            case 1:
-              expect(content).toMatch(/lib works/);
-              host.writeMultipleFiles(goldenValueFiles);
-              break;
+        return content;
+      }),
+      tap(content => {
+        buildNumber += 1;
+        switch (buildNumber) {
+          case 1:
+            expect(content).toMatch(/lib works/);
+            host.writeMultipleFiles(goldenValueFiles);
+            break;
 
-            case 2:
-              expect(content).toMatch(/lib update works/);
-              break;
-            default:
-              break;
-          }
-        }),
-        take(2),
-      )
-      .toPromise()
-      .then(done, done.fail);
+          case 2:
+            expect(content).toMatch(/lib update works/);
+            break;
+          default:
+            break;
+        }
+      }),
+      take(2),
+    ).toPromise();
+
+    await run.stop();
   });
 
+  it('copy asset files', async () => {
+    const run = await architect.scheduleTarget({ project: 'lib', target: 'build' });
+
+    await expectAsync(run.result).toBeResolvedTo(jasmine.objectContaining({ success: true }));
+
+    await run.stop();
+
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/main.scss'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/_lib.scss'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/some-assets/some-asset.css'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/deep-assets/some-deep/some-deep.scss'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.txt'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/some-assets/some-file.txt'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.css'))).toBe(true);
+  });
 });
+
