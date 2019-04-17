@@ -5,33 +5,30 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
-import { resolve } from 'path';
+import { BuilderContext, BuilderOutput, BuilderRun, createBuilder } from '@angular-devkit/architect';
 import { Observable, from } from 'rxjs';
-import { catchError, mapTo, switchMap } from 'rxjs/operators';
+import {catchError, mapTo, switchMap} from 'rxjs/operators';
 import { Schema as NgPackagrBuilderOptions } from './schema';
 
-async function initialize(
+async function scheduleBuildNgPackagr(
   options: NgPackagrBuilderOptions,
-  root: string,
-): Promise<import ('ng-packagr').NgPackagr> {
-  const packager = (await import('ng-packagr')).ngPackagr();
+  context: BuilderContext,
+): Promise<BuilderRun> {
+  const buildNgPackagrOptions = {
+    project: options.project,
+    tsConfig: options.tsConfig,
+    watch: options.watch
+  };
 
-  packager.forProject(resolve(root, options.project));
-
-  if (options.tsConfig) {
-    packager.withTsConfig(resolve(root, options.tsConfig));
-  }
-
-  return packager;
+  return context.scheduleBuilder('@angular-devkit/build-ng-packagr:build', buildNgPackagrOptions);
 }
 
 export function execute(
   options: NgPackagrBuilderOptions,
   context: BuilderContext,
 ): Observable<BuilderOutput> {
-  return from(initialize(options, context.workspaceRoot)).pipe(
-    switchMap(packager => options.watch ? packager.watch() : packager.build()),
+  return from(scheduleBuildNgPackagr(options, context)).pipe(
+    switchMap(buildNgPackagr => buildNgPackagr.result),
     mapTo({ success: true }),
     catchError(error => {
       context.reportStatus('Error: ' + error);
