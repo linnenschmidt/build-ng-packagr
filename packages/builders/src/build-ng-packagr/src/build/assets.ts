@@ -1,22 +1,26 @@
-import { resolve, virtualFs } from '@angular-devkit/core';
+import { BuilderContext } from '@angular-devkit/architect';
+import { getSystemPath, normalize, resolve, virtualFs } from '@angular-devkit/core';
+import { NodeJsSyncHost } from '@angular-devkit/core/node';
 import * as fs from 'fs';
 import * as globby from 'globby';
 import { discoverPackages } from 'ng-packagr/lib/ng-v5/discover-packages';
 import * as log from 'ng-packagr/lib/util/log';
 import * as path from 'path';
-import {AssetPattern, AssetPatternObject, normalizeAssetPatterns} from './assets-patterns';
+import { Observable, from } from 'rxjs';
+import { AssetPattern, normalizeAssetPatterns } from './assets-patterns';
+import { AssetPatternClass, Schema as NgPackagrBuilderOptions } from './schema';
 
 export function handleAssets(
-  context: any,
-  packageJsonPath: string,
-  builderConfig: any,
-): Promise<any> {
-  return discoverPackages({ project: packageJsonPath }).then(ngPackage => {
-    log.info('Copying Assets');
+  context: BuilderContext,
+  options: NgPackagrBuilderOptions,
+): Observable<any> {
+  const host = new NodeJsSyncHost();
+  const projectPath = resolve(normalize(context.workspaceRoot), normalize(path.dirname(options.project)));
+  const projectRoot = getSystemPath(projectPath);
 
-    const { options } = builderConfig;
-    const projectRoot = resolve(context.workspace.root, builderConfig.root);
-    const syncHost = new virtualFs.SyncDelegateHost(context.host);
+  return from(discoverPackages({ project: projectRoot }).then(ngPackage => {
+    log.info('Copying Assets');
+    const syncHost = new virtualFs.SyncDelegateHost(host);
 
     if (options.assets.length === 0) {
       return Promise.resolve();
@@ -25,18 +29,18 @@ export function handleAssets(
     const assets = normalizeAssetPatterns(
       options.assets,
       syncHost,
-      projectRoot,
-      projectRoot,
+      projectPath,
+      projectPath,
       undefined,
     );
 
     return moveAssets(ngPackage.src, ngPackage.dest, assets);
-  });
+  }));
 }
 
 /**
  *
- * @see https://github.com/angular/angular-cli/blob/18566b0442510e92ae6dcdd358a70e9cf213ddeb/packages/angular_devkit/build_angular/src/angular-cli-files/models/webpack-configs/common.ts#L121-L149
+ * @see https://github.com/angular/angular-cli/blob/29609fb0785646fdbb636b08853a13df65fac06a/packages/angular_devkit/build_angular/src/angular-cli-files/models/webpack-configs/common.ts#L160-L188
  */
 function moveAssets(
   src: string,
@@ -45,7 +49,7 @@ function moveAssets(
 ): Promise<any> {
   try {
     const copyWebpackPluginPatterns = assets.map(
-      (asset: AssetPatternObject) => {
+      (asset: AssetPatternClass) => {
         // Resolve input paths relative to workspace root and add slash at the end.
         asset.input = path.resolve(src, asset.input).replace(/\\/g, '/');
         asset.input = asset.input.endsWith('/')

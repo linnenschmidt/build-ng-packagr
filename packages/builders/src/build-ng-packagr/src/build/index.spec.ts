@@ -109,13 +109,14 @@ describe('NgPackagr Builder', () => {
 
     await run.stop();
 
-    expect(host.scopedSync().exists(normalize('./dist/lib/assets/main.scss'))).toBe(true);
     expect(host.scopedSync().exists(normalize('./dist/lib/assets/_lib.scss'))).toBe(true);
-    expect(host.scopedSync().exists(normalize('./dist/lib/assets/some-assets/some-asset.css'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/main.scss'))).toBe(true);
     expect(host.scopedSync().exists(normalize('./dist/lib/deep-assets/some-deep/some-deep.scss'))).toBe(true);
-    expect(host.scopedSync().exists(normalize('./dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.txt'))).toBe(true);
-    expect(host.scopedSync().exists(normalize('./dist/lib/assets/some-assets/some-file.txt'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/some-assets/some-asset.css'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/some-assets/some-file.txt'))).toBe(false);
     expect(host.scopedSync().exists(normalize('./dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.css'))).toBe(true);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.scss'))).toBe(false);
+    expect(host.scopedSync().exists(normalize('./dist/lib/assets/deep-output/deep-assets/some-deep/some-deep.txt'))).toBe(false);
   });
 });
 

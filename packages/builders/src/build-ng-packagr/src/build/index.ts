@@ -7,8 +7,9 @@
  */
 import { BuilderContext, BuilderOutput, BuilderRun, createBuilder } from '@angular-devkit/architect';
 import { Observable, from } from 'rxjs';
-import {catchError, mapTo, switchMap} from 'rxjs/operators';
+import { catchError, mapTo, switchMap } from 'rxjs/operators';
 import { Schema as NgPackagrBuilderOptions } from './schema';
+import { handleAssets } from './assets';
 
 async function scheduleBuildNgPackagr(
   options: NgPackagrBuilderOptions,
@@ -28,7 +29,8 @@ export function execute(
   context: BuilderContext,
 ): Observable<BuilderOutput> {
   return from(scheduleBuildNgPackagr(options, context)).pipe(
-    switchMap(buildNgPackagr => buildNgPackagr.result),
+    switchMap(buildNgPackagr => buildNgPackagr.output),
+    switchMap(() => handleAssets(context, options)),
     mapTo({ success: true }),
     catchError(error => {
       context.reportStatus('Error: ' + error);
