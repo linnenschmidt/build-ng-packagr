@@ -2,7 +2,6 @@
   "name": "build-ng-packagr",
   "version": "1.0.0",
   "description": "Angular Build Architect for ng-packagr with @angular-devkit/build-angular like asset handling",
-  "main": "index.js",
   "scripts": {
     "test": "./scripts/test.sh",
     "build": "./scripts/build.sh"
