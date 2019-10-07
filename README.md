@@ -21,7 +21,7 @@ yarn add @linnenschmidt/build-ng-packagr --dev
 
 1. Replace the build architect of your libraries by  `@linnenschmidt/build-ng-packagr:build`.
     ```json
-   "targets": {
+   "architect": {
      "build": {
        "builder": "@linnenschmidt/build-ng-packagr:build",
     ```
@@ -50,7 +50,7 @@ A final angular.json file could look like the following example:
     "lib": {
       "root": "projects/lib",
       "projectType": "library",
-      "targets": {
+      "architect": {
         "build": {
           "builder": "@linnenschmidt/build-ng-packagr:build",
           "options": {
