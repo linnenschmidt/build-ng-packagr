@@ -3,8 +3,8 @@ import { getSystemPath, normalize, resolve, virtualFs } from '@angular-devkit/co
 import { NodeJsSyncHost } from '@angular-devkit/core/node';
 import * as fs from 'fs';
 import * as globby from 'globby';
-import { discoverPackages } from 'ng-packagr/lib/ng-v5/discover-packages';
-import * as log from 'ng-packagr/lib/util/log';
+import { discoverPackages } from 'ng-packagr/lib/ng-package/discover-packages';
+import * as log from 'ng-packagr/lib/utils/log';
 import * as path from 'path';
 import { Observable, from } from 'rxjs';
 import { AssetPattern, normalizeAssetPatterns } from './assets-patterns';
