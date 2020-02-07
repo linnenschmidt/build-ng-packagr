@@ -1,6 +1,6 @@
 {
   "name": "@linnenschmidt/build-ng-packagr",
-  "version": "9.0.0-rc.0",
+  "version": "9.0.0",
   "description": "Angular Build Architect for ng-packagr with asset handling",
   "keywords": [
     "angular",
@@ -23,14 +23,14 @@
   },
   "homepage": "https://github.com/linnenschmidt/build-ng-packagr#readme",
   "dependencies": {
-    "@angular-devkit/architect": "0.900.0-rc.14",
-    "@angular-devkit/build-ng-packagr": "0.900.0-rc.14",
-    "@angular-devkit/core": "9.0.0-rc.14",
+    "@angular-devkit/architect": "0.900.1",
+    "@angular-devkit/build-ng-packagr": "0.900.1",
+    "@angular-devkit/core": "9.0.1",
     "rxjs": "6.5.3",
     "globby": "^10.0.0"
   },
   "peerDependencies": {
-    "ng-packagr": "^9.0.0-rc.8",
+    "ng-packagr": "^9.0.0",
     "tsickle": "~0.37.1 || ~0.38.0"
   },
   "peerDependenciesMeta": {
