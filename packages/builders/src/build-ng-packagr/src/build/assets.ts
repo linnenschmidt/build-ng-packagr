@@ -2,7 +2,7 @@ import { BuilderContext } from '@angular-devkit/architect';
 import { getSystemPath, normalize, resolve, virtualFs } from '@angular-devkit/core';
 import { NodeJsSyncHost } from '@angular-devkit/core/node';
 import * as fs from 'fs';
-import * as globby from 'globby';
+import { globby } from 'globby';
 import { discoverPackages } from 'ng-packagr/lib/ng-package/discover-packages';
 import * as log from 'ng-packagr/lib/utils/log';
 import * as path from 'path';
