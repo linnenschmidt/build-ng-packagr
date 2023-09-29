@@ -1,10 +1,12 @@
 # Angular Build Architect for ng-packagr with asset handling
 
-The default Angular build architect _@angular-devkit/build-ng-packagr_ for ng-packagr doesn't copy assets of libraries.
-Most library projects have assets which was mentioned here
-[/angular/angular-cli/issues/11071](https://github.com/angular/angular-cli/issues/11071#issuecomment-451271094).
+> **_NOTE:_** Since copying assets is now fully supported, this project is now archived.
 
-This Angular Build Architect solves the known issue of _@angular-devkit/build-ng-packagr_ even if you only copy assets.
+~~The default Angular build architect _@angular-devkit/build-ng-packagr_ for ng-packagr doesn't copy assets of libraries.
+Most library projects have assets which was mentioned here
+[/angular/angular-cli/issues/11071](https://github.com/angular/angular-cli/issues/11071#issuecomment-451271094).~~
+
+~~This Angular Build Architect solves the known issue of _@angular-devkit/build-ng-packagr_ even if you only copy assets.~~
 
 ## How to install
 
